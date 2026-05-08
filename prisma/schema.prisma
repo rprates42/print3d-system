@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model RawMaterial {
+  id               String            @id @default(cuid())
+  name             String
+  type             String
+  supplier         String?
+  costPerUnit      Float
+  unit             String
+  stockQuantity    Float             @default(0)
+  notes            String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  productMaterials ProductMaterial[]
+}
+
+model Product {
+  id             String            @id @default(cuid())
+  name           String
+  description    String?
+  category       String?
+  printTimeHours Float
+  status         String            @default("ACTIVE")
+  overhead       Float             @default(0)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  materials      ProductMaterial[]
+  saleItems      SaleItem[]
+  listings       ProductListing[]
+}
+
+model ProductMaterial {
+  id         String      @id @default(cuid())
+  productId  String
+  materialId String
+  quantity   Float
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  material   RawMaterial @relation(fields: [materialId], references: [id], onDelete: Restrict)
+
+  @@unique([productId, materialId])
+}
+
+model LogisticsCost {
+  id             String   @id @default(cuid())
+  description    String
+  type           String
+  amount         Float
+  referenceMonth String?
+  saleId         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  sale           Sale?    @relation(fields: [saleId], references: [id], onDelete: SetNull)
+}
+
+model Sale {
+  id             String          @id @default(cuid())
+  channel        String
+  saleDate       DateTime        @default(now())
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  items          SaleItem[]
+  logisticsCosts LogisticsCost[]
+}
+
+model SaleItem {
+  id               String   @id @default(cuid())
+  saleId           String
+  productId        String
+  quantity         Int
+  unitPrice        Float
+  unitCostSnapshot Float?
+  sale             Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product          Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+}
+
+model ProductListing {
+  id          String   @id @default(cuid())
+  productId   String
+  channel     String
+  views       Int      @default(0)
+  clicks      Int      @default(0)
+  periodStart DateTime
+  periodEnd   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, channel, periodStart])
+}
