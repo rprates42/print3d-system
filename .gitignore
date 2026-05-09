@@ -41,4 +41,5 @@ prisma/dev.db-wal
 *.tsbuildinfo
 next-env.d.ts
 
-# /src/generated/prisma — não ignorar, necessário para o build na Vercel
+# gerado pelo prisma generate — não commitar
+/src/generated/prisma
