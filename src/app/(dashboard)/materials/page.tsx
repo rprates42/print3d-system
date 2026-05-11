@@ -10,6 +10,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -29,6 +30,9 @@ const TYPE_LABELS: Record<string, string> = {
 export default async function MaterialsPage() {
   noStore();
   const materials = await db.rawMaterial.findMany({ orderBy: { name: "asc" } });
+
+  const totalValue = materials.reduce((sum, m) => sum + m.costPerUnit * m.stockQuantity, 0);
+  const totalStock = materials.reduce((sum, m) => sum + m.stockQuantity, 0);
 
   return (
     <div className="space-y-6">
@@ -53,6 +57,7 @@ export default async function MaterialsPage() {
               <TableHead className="text-zinc-400">Fornecedor</TableHead>
               <TableHead className="text-zinc-400">Custo/unidade</TableHead>
               <TableHead className="text-zinc-400">Estoque</TableHead>
+              <TableHead className="text-zinc-400">Valor em estoque</TableHead>
               <TableHead className="text-zinc-400">Cadastrado em</TableHead>
               <TableHead className="text-zinc-400 text-right">Ações</TableHead>
             </TableRow>
@@ -60,7 +65,7 @@ export default async function MaterialsPage() {
           <TableBody>
             {materials.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-zinc-500 py-12">
+                <TableCell colSpan={8} className="text-center text-zinc-500 py-12">
                   Nenhum material cadastrado. Clique em &quot;Novo Material&quot; para começar.
                 </TableCell>
               </TableRow>
@@ -79,6 +84,9 @@ export default async function MaterialsPage() {
                   </TableCell>
                   <TableCell className="text-zinc-400">
                     {m.stockQuantity} {m.unit}
+                  </TableCell>
+                  <TableCell className="text-zinc-100">
+                    {formatCurrency(m.costPerUnit * m.stockQuantity)}
                   </TableCell>
                   <TableCell className="text-zinc-400">{formatDate(m.createdAt)}</TableCell>
                   <TableCell className="text-right">
@@ -102,6 +110,22 @@ export default async function MaterialsPage() {
               ))
             )}
           </TableBody>
+          {materials.length > 0 && (
+            <TableFooter className="border-t border-zinc-700 bg-zinc-900">
+              <TableRow className="hover:bg-zinc-900">
+                <TableCell colSpan={4} className="text-zinc-400 font-medium">
+                  Total
+                </TableCell>
+                <TableCell className="text-zinc-200 font-medium">
+                  {totalStock.toLocaleString("pt-BR")} un.
+                </TableCell>
+                <TableCell className="text-zinc-200 font-medium">
+                  {formatCurrency(totalValue)}
+                </TableCell>
+                <TableCell colSpan={2} />
+              </TableRow>
+            </TableFooter>
+          )}
         </Table>
       </div>
     </div>
