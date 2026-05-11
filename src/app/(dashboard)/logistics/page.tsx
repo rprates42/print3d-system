@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/lib/db";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import Link from "next/link";
@@ -18,6 +19,7 @@ import { Plus, Trash2, TrendingDown } from "lucide-react";
 import { DeleteLogisticsButton } from "@/components/logistics/DeleteLogisticsButton";
 
 export default async function LogisticsPage() {
+  noStore();
   const costs = await db.logisticsCost.findMany({ orderBy: { createdAt: "desc" } });
   const fixed = costs.filter((c) => c.type === "FIXED");
   const variable = costs.filter((c) => c.type === "VARIABLE");

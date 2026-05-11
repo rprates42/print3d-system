@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/lib/db";
-import { formatCurrency } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Plus, Pencil } from "lucide-react";
 import { DeleteMaterialButton } from "@/components/materials/DeleteMaterialButton";
+import { RestockButton } from "@/components/materials/RestockButton";
 
 const TYPE_LABELS: Record<string, string> = {
   PLA: "PLA",
@@ -51,8 +52,8 @@ export default async function MaterialsPage() {
               <TableHead className="text-zinc-400">Tipo</TableHead>
               <TableHead className="text-zinc-400">Fornecedor</TableHead>
               <TableHead className="text-zinc-400">Custo/unidade</TableHead>
-              <TableHead className="text-zinc-400">Unidade</TableHead>
               <TableHead className="text-zinc-400">Estoque</TableHead>
+              <TableHead className="text-zinc-400">Cadastrado em</TableHead>
               <TableHead className="text-zinc-400 text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -72,16 +73,23 @@ export default async function MaterialsPage() {
                       {TYPE_LABELS[m.type] ?? m.type}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-zinc-400">{m.supplier ?? "—"}</TableCell>
+                  <TableCell className="text-zinc-400">{m.supplier || "—"}</TableCell>
                   <TableCell className="text-zinc-100">
                     {formatCurrency(m.costPerUnit)}/{m.unit}
                   </TableCell>
-                  <TableCell className="text-zinc-400">{m.unit}</TableCell>
                   <TableCell className="text-zinc-400">
                     {m.stockQuantity} {m.unit}
                   </TableCell>
+                  <TableCell className="text-zinc-400">{formatDate(m.createdAt)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
+                      <RestockButton
+                        id={m.id}
+                        name={m.name}
+                        currentStock={m.stockQuantity}
+                        currentCostPerUnit={m.costPerUnit}
+                        unit={m.unit}
+                      />
                       <Link href={`/materials/${m.id}`}>
                         <Button size="sm" variant="ghost" className="text-zinc-400 hover:text-zinc-100">
                           <Pencil className="h-3.5 w-3.5" />

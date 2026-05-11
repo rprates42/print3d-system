@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+
+import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/lib/db";
 import { calcMargin } from "@/lib/calculations";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
@@ -15,6 +18,7 @@ import {
 import { startOfMonth, endOfMonth, subDays, format } from "date-fns";
 
 async function getDashboardData() {
+  noStore();
   const now = new Date();
   const start = startOfMonth(now);
   const end = endOfMonth(now);

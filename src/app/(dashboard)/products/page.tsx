@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/lib/db";
 import { calcMaterialCost } from "@/lib/calculations";
 import { formatCurrency } from "@/lib/formatters";
@@ -18,6 +19,7 @@ import { Plus, Pencil } from "lucide-react";
 import { DeleteProductButton } from "@/components/products/DeleteProductButton";
 
 export default async function ProductsPage() {
+  noStore();
   const products = await db.product.findMany({
     orderBy: { name: "asc" },
     include: {

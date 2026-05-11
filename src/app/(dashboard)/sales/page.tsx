@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/lib/db";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import Link from "next/link";
@@ -26,6 +27,7 @@ const CHANNEL_LABELS: Record<string, string> = {
 };
 
 export default async function SalesPage() {
+  noStore();
   const sales = await db.sale.findMany({
     orderBy: { saleDate: "desc" },
     include: {

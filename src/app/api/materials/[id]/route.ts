@@ -36,6 +36,35 @@ export async function PUT(
   return NextResponse.json(material);
 }
 
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const body = await req.json();
+  const parsed = z
+    .object({
+      quantityAdded: z.number().positive(),
+      newCostPerUnit: z.number().positive().optional(),
+    })
+    .safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+  const material = await db.rawMaterial.findUnique({ where: { id } });
+  if (!material) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const updated = await db.rawMaterial.update({
+    where: { id },
+    data: {
+      stockQuantity: material.stockQuantity + parsed.data.quantityAdded,
+      ...(parsed.data.newCostPerUnit !== undefined && {
+        costPerUnit: parsed.data.newCostPerUnit,
+      }),
+    },
+  });
+  return NextResponse.json(updated);
+}
+
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
