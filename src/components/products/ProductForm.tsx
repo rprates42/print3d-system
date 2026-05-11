@@ -153,8 +153,8 @@ export function ProductForm({ defaultValues, defaultMaterials = [] }: Props) {
 
     if (res.ok) {
       toast.success(isEdit ? "Produto atualizado!" : "Produto criado!");
-      router.push("/products");
       router.refresh();
+      router.push("/products");
     } else {
       const err = await res.json();
       toast.error(err.error?.message ?? "Erro ao salvar.");

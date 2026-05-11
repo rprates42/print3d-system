@@ -128,8 +128,8 @@ export function SaleForm() {
 
     if (res.ok) {
       toast.success("Venda registrada!");
-      router.push("/sales");
       router.refresh();
+      router.push("/sales");
     } else {
       toast.error("Erro ao registrar venda.");
     }

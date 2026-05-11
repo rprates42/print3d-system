@@ -24,8 +24,8 @@ export default function LoginPage() {
     });
 
     if (result?.ok) {
-      router.push("/dashboard");
       router.refresh();
+      router.push("/dashboard");
     } else {
       setError("Email ou senha incorretos.");
       setLoading(false);

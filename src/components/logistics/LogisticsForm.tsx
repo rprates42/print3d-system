@@ -41,8 +41,8 @@ export function LogisticsForm() {
 
     if (res.ok) {
       toast.success("Custo registrado!");
-      router.push("/logistics");
       router.refresh();
+      router.push("/logistics");
     } else {
       toast.error("Erro ao registrar custo.");
     }

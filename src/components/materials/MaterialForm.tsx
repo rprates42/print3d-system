@@ -95,8 +95,8 @@ export function MaterialForm({ defaultValues }: Props) {
 
     if (res.ok) {
       toast.success(isEdit ? "Material atualizado!" : "Material criado!");
-      router.push("/materials");
       router.refresh();
+      router.push("/materials");
     } else {
       const err = await res.json();
       toast.error(err.error?.message ?? "Erro ao salvar.");
