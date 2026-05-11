@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/lib/db";
 import { formatCurrency } from "@/lib/formatters";
 import Link from "next/link";
@@ -25,6 +26,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export default async function MaterialsPage() {
+  noStore();
   const materials = await db.rawMaterial.findMany({ orderBy: { name: "asc" } });
 
   return (
